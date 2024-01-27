@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{{>headContent}}
+
+
+<body>
+    {{>navbar}}
+    {{>weatherBody}}
+    {{>footer}}
+    <script>
+        const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var d= new Date()
+        const submitBtn = document.getElementById('submitBtn');
+        const cityName = document.getElementById("cityName")
+        const getInfo = async(event) => {
+            event.preventDefault();
+            cityVal = cityName.value;
+            cityVal = cityVal.trim()
+            if (cityVal === "") {
+                document.getElementById("city_name").innerText = `please enter a valid city`
+                document.getElementById("city_temperature").innerText=0;
+            } else {
+                try{
+                    URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityVal}&units=metric&appid=7d574e69cc55d40a7ca5760052585b00`
+                    const response = await fetch(URL)
+                    const res= await response.json();
+                    document.getElementById("city_name").innerText = `${res.name} ${res.sys.country}`
+                    document.getElementById("city_temperature").innerText =res.main.temp;
+                    var iconcode=res.weather[0].icon;
+                    var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+                    document.getElementById("temp_status").innerHTML=`<img src=${iconurl}>`
+                    document.getElementById("today_data").innerText=`${d.getDate()} ${months[d.getMonth()]}`
+                    document.getElementById("day").innerText=`${days[d.getDay()]}`
+                }catch{
+                    document.getElementById("city_name").innerText = `please enter a valid city`
+                    document.getElementById("city_temperature").innerText=0;
+                    document.getElementById("temp_status").innerHTML=`<i class="fa fa-cloud"></i>`
+
+                }
+            }
+        }
+        submitBtn.addEventListener('click', getInfo)
+    </script>
+</body>
+
+</html>
